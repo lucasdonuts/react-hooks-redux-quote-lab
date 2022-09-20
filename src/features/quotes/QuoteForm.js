@@ -1,22 +1,39 @@
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import { addQuote } from "./quotesSlice";
+import { useDispatch } from 'react-redux';
 
 function QuoteForm() {
   const [formData, setFormData] = useState({
-    // set up a controlled form with internal state
-    // look at the form to determine what keys need to go here
-  });
+    content: '',
+    author: ''
+  })
 
-  function handleChange(event) {
+  const dispatch = useDispatch();
+
+  function handleChange(e) {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
     // Handle Updating Component State
   }
 
-  function handleSubmit(event) {
+  function handleSubmit(e) {
+    e.preventDefault();
+    dispatch(addQuote({
+      ...formData,
+      id: uuid(),
+      votes: 0
+    }));
     // Handle Form Submit event default
     // Create quote object from state
     // Pass quote object to action creator
     // Update component state to return to default state
+    setFormData({
+      content: '',
+      author: ''
+    });
   }
 
   return (
@@ -25,15 +42,17 @@ function QuoteForm() {
         <div className="col-md-8 col-md-offset-2">
           <div className="panel panel-default">
             <div className="panel-body">
-              <form className="form-horizontal">
+              <form className="form-horizontal" onSubmit={ handleSubmit }>
                 <div className="form-group">
                   <label htmlFor="content" className="col-md-4 control-label">
                     Quote
                   </label>
                   <div className="col-md-5">
                     <textarea
+                      onChange={ handleChange }
                       className="form-control"
                       id="content"
+                      name="content"
                       value={formData.content}
                     />
                   </div>
@@ -44,9 +63,11 @@ function QuoteForm() {
                   </label>
                   <div className="col-md-5">
                     <input
+                      onChange={ handleChange }
                       className="form-control"
                       type="text"
                       id="author"
+                      name="author"
                       value={formData.author}
                     />
                   </div>
